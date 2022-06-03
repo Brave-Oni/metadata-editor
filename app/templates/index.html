@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>All devices</h1>
+    <div class="content">
+        {% for device in devices %}
+            <div class="device">
+                <p><b> {{ device.company.name }} {{ device.name }} </b></p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
