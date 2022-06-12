@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="d-flex  flex-column">
+        <h1 class="display-1 align-self-center mb-5">Info</h1>
+        {% if form.errors %}
+        <div class="container-sm">
+            {% for _, error in form.errors.items() %}
+                <div class="alert alert-danger" role="alert">{{ ', '.join(error) }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if image.get_metadata() %}
+            <div class="d-flex">
+                <div class="container">
+                    <ul class="list-group-flush">
+                        {% for key, value in image.get_metadata().items() %}
+                            <li class="list-group-item mb-3">{{ key }}: {{ value }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="container">
+                    <form method="POST" class="form">
+                        {{ form.csrf_token }}
+
+                        <div class="row justify-content-center">
+                            <div class="col-md-3 align-self-center mb-5">
+                                {{ form.company.label(for="validationCustom1", class="form-label") }} {{ form.company(class="form-select", id="validationCustom1") }}
+                            </div>
+
+                            <div class="col-md-3 align-self-center mb-5">
+                                {{ form.models.label(for="validationCustom2", class="form-label") }} {{ form.models(class="form-select", id="validationCustom2") }}
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="col-md-3 align-self-center mb-5">
+                                {{ form.datetime.label(for="validationCustom3", class="form-label") }} {{ form.datetime(class="form-control", id="validationCustom3") }}
+                            </div>
+
+                            <div class="col-md-3 align-self-center mb-5">
+                                {{ form.gps_lat.label(for="validationCustom4", class="form-label") }} {{ form.gps_lat(class="form-control", id="validationCustom4") }}
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="col-md-3 align-self-center mb-5">
+                                {{ form.gps_long.label(for="validationCustom5", class="form-label") }} {{ form.gps_long(class="form-control", id="validationCustom5") }}
+                            </div>
+
+                            <div class="col-md-3 align-self-center mb-5">
+                                {{ form.gps_lat_ref.label(for="validationCustom6", class="form-label") }} {{ form.gps_lat_ref(class="form-select", id="validationCustom6") }}
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-center">
+                            <div class="col-md-3 align-self-center mb-5">
+                                {{ form.gps_long_ref.label(for="validationCustom7", class="form-label") }} {{ form.gps_long_ref(class="form-select", id="validationCustom7") }}
+                            </div>
+
+                            <div class="col-md-3 align-self-center mb-3">
+                                {{ form.submit(onclick=url_for('index'), class="btn btn-primary") }}
+                            </div>
+                        </div>
+                        <script>
+                            let company_select = document.getElementById('validationCustom1');
+                            let model_select = document.getElementById('validationCustom2');
+
+                            company_select.onchange = function () {
+                                let company = company_select.value;
+
+                                fetch('/company/' + company).then(function (response) {
+                                    response.json().then(function (data){
+                                        let option = ''
+                                        for (let model of data.models){
+                                            option += '<option value="' + model.id + '">' + model.name + '</option>'
+                                        }
+                                        model_select.innerHTML = option;
+                                    });
+                                });
+
+                                console.log('{{ form.models }}');
+                            }
+                        </script>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <p>No metadata</p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+
+<!--
+<div id="map" style="height: 250px; width: 500px;"></div>
+    <script type="text/javascript">
+        var map = L.map('map').fitWorld();
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        map.on('click', setMarker);
+
+        function setMarker(e){
+            marker._latlng = e.latlng;
+        }
+    </script>
+    <script>
+        var marker = L.marker([13, 14]).addTo(map);
+    </script>
+-->
