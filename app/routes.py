@@ -1,4 +1,6 @@
 import os
+
+import plum.exceptions
 from flask import render_template, request, flash, redirect, url_for, jsonify, send_file
 from werkzeug.utils import secure_filename
 from .meta import meta
@@ -30,7 +32,13 @@ def index():
 @app.route("/info", methods=["GET", "POST"])
 def info():
     filename = request.args['filename']
-    image = meta.MetaImage(filename)
+    location = "No info"
+    try:
+        image = meta.MetaImage(filename)
+        location = image.get_location()
+    except plum.exceptions.UnpackError:
+        image = None
+
     form = EditForm()
 
     form.company.choices += [(company.id, company.name) for company in Companies.query.all()]
@@ -64,7 +72,7 @@ def info():
             image.save(filename)
             return redirect(url_for("download", filename=filename))
 
-    return render_template("info.html", image=image, form=form)
+    return render_template("info.html", image=image, form=form, location=location)
 
 
 @app.route("/download", methods=["GET", "POST"])

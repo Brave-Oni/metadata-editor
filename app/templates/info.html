@@ -10,13 +10,14 @@
             {% endfor %}
         </div>
         {% endif %}
-        {% if image.get_metadata() %}
+        {% if image and image.get_metadata() %}
             <div class="d-flex">
                 <div class="container">
                     <ul class="list-group-flush">
                         {% for key, value in image.get_metadata().items() %}
                             <li class="list-group-item mb-3">{{ key }}: {{ value }}</li>
                         {% endfor %}
+                        <li class="list-group-item mb-3">Location: {{ location }}</li>
                     </ul>
                 </div>
                 <div class="container">
@@ -86,7 +87,7 @@
                 </div>
             </div>
         {% else %}
-            <p>No metadata</p>
+            <h3 class="display-3 align-self-center">No metadata</h3>
         {% endif %}
     </div>
 {% endblock %}
